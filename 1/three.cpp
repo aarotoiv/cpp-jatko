@@ -5,9 +5,11 @@ void incrementPtr(int* arr);
 
 int main() {
     int arr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int *ar = {arr};
-    increment(ar);
-    incrementPtr(ar);
+    increment(arr);
+    incrementPtr(arr);
+    for(int i = 0; i<10; i++) {
+        std::cout << arr[i] << std::endl;
+    }
     return 0;
 }
 

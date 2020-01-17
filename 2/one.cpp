@@ -21,6 +21,7 @@ int main() {
     std::cout << "Anna 3. sivun pituus: " << std::endl;
     std::cin >> kolmas;
 
+
     if(onKolmiollinen(eka, toka, kolmas, epaSaannollinen)) 
         std::cout << "Kolmio muodostaa epasaannollisen kolmion." << std::endl;
     if(onKolmiollinen(eka, toka, kolmas, tasaKylkinen)) 
@@ -29,14 +30,16 @@ int main() {
         std::cout << "Kolmio muodostaa tasasivuisen kolmion." << std::endl;
     if(onKolmiollinen(eka, toka, kolmas, suoraKulmainen))
         std::cout << "Kolmio muodostaa suorakulmaisen kolmion." << std::endl;
+    
     return 0;
 }
 
 bool onKolmiollinen(int eka, int toka, int kolmas, Kolmio tyyppi) {
+
     switch(tyyppi) {
         case epaSaannollinen:
             if(eka != 0 && toka != 0 && kolmas != 0) 
-                return    onKolmiollinen(eka, toka, kolmas, epaSaannollinen); true;
+                return true;
             return false;
             break;
         case tasaKylkinen:

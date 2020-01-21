@@ -35,7 +35,7 @@ int main() {
 }
 
 bool onKolmiollinen(double eka, double toka, double kolmas, Kolmio tyyppi) {
-    if(eka != 0 && toka != 0 && kolmas != 0) {
+    if(eka != 0 && toka != 0 && kolmas != 0 && eka + toka > kolmas || eka + kolmas > toka || kolmas + toka > eka) {
         switch(tyyppi) {
             case epaSaannollinen:
                 if(eka != toka && toka != kolmas) 

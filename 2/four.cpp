@@ -7,16 +7,26 @@ bool primeDiv(int luku);
 bool primeSqrt(int luku);
 
 int main() {
+    //TIMES @ n = 100000
+    //prime = 12.94s
+    //primeDiv = 7.21s
+    //primeSqrt = 0.06s
+    //primeSqrt on siis ylivoimaisesti tehokkain
+
     auto duration = std::chrono::system_clock::now().time_since_epoch();
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    const int KOKO = 10000;
+    
+    const int KOKO = 100000;
     int primes = 0;
+    
     for(int i = 2; i<KOKO; i++) {
         if(primeSqrt(i))
             primes++;
     }
+
     double percentage = (double)primes / (double)KOKO * 100.0;
     std::cout << percentage << std::endl;
+    
     duration = std::chrono::system_clock::now().time_since_epoch();
     auto newmillis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     std::cout << (double)(newmillis - millis) / 1000.0 << std::endl;

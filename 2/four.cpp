@@ -1,11 +1,14 @@
 #include <iostream>
 #include <math.h>
+#include <chrono>
 
 bool prime(int luku);
 bool primeDiv(int luku);
 bool primeSqrt(int luku);
 
 int main() {
+    auto duration = std::chrono::system_clock::now().time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     const int KOKO = 10000;
     int primes = 0;
     for(int i = 2; i<KOKO; i++) {
@@ -14,6 +17,9 @@ int main() {
     }
     double percentage = (double)primes / (double)KOKO * 100.0;
     std::cout << percentage << std::endl;
+    duration = std::chrono::system_clock::now().time_since_epoch();
+    auto newmillis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    std::cout << (double)(newmillis - millis) / 1000.0 << std::endl;
     return 0;
 }
 

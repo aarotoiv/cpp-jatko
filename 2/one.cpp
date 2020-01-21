@@ -8,12 +8,12 @@ enum Kolmio {
     suoraKulmainen
 };
 
-bool onKolmiollinen(int eka, int toka, int kolmas, Kolmio tyyppi);
+bool onKolmiollinen(double eka, double toka, double kolmas, Kolmio tyyppi);
 
 int main() {
-    int eka = 0;
-    int toka = 0;
-    int kolmas = 0;
+    double eka = 0;
+    double toka = 0;
+    double kolmas = 0;
     std::cout << "Anna 1. sivun pituus: " << std::endl;
     std::cin >> eka;
     std::cout << "Anna 2. sivun pituus: " << std::endl;
@@ -34,30 +34,34 @@ int main() {
     return 0;
 }
 
-bool onKolmiollinen(int eka, int toka, int kolmas, Kolmio tyyppi) {
-
-    switch(tyyppi) {
-        case epaSaannollinen:
-            if(eka != 0 && toka != 0 && kolmas != 0) 
-                return true;
-            return false;
-            break;
-        case tasaKylkinen:
-            if(eka == toka || toka == kolmas ||  kolmas == eka) 
-                return true;
-            return false;
-            break;
-        case tasaSivuinen:
-            if(eka == toka && toka == kolmas) 
-                return true;
-            return false;
-            break;
-        case suoraKulmainen:
-            if(sqrt(pow(eka, 2) + pow(toka, 2)) == kolmas ||
-                sqrt(pow(eka, 2) + pow(kolmas, 2)) == toka ||
-                sqrt(pow(toka, 2) + pow(kolmas, 2)) == eka)
-                return true;
-            return false;
-            break;
+bool onKolmiollinen(double eka, double toka, double kolmas, Kolmio tyyppi) {
+    if(eka != 0 && toka != 0 && kolmas != 0) {
+        switch(tyyppi) {
+            case epaSaannollinen:
+                if(eka != toka && toka != kolmas) 
+                    return true;
+                return false;
+                break;
+            case tasaKylkinen:
+                if(eka == toka || toka == kolmas ||  kolmas == eka) 
+                    return true;
+                return false;
+                break;
+            case tasaSivuinen:
+                if(eka == toka && toka == kolmas) 
+                    return true;
+                return false;
+                break;
+            case suoraKulmainen:
+                if(sqrt(pow(eka, 2) + pow(toka, 2)) == kolmas ||
+                    sqrt(pow(eka, 2) + pow(kolmas, 2)) == toka ||
+                    sqrt(pow(toka, 2) + pow(kolmas, 2)) == eka)
+                    return true;
+                return false;
+                break;
+        }
     }
+    else 
+        return false;
+    
 }

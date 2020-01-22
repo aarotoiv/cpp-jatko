@@ -11,6 +11,7 @@ int main() {
     std::time_t kaikki_sekunnit = std::time(nullptr) % (24 * 60 * 60);
     sekunnitAjaksi(kaikki_sekunnit, tunnit, minuutit, sekunnit);
     std::cout << tunnit << ":" << minuutit << ":" << sekunnit << std::endl;
+    
     return 0;
 }
 

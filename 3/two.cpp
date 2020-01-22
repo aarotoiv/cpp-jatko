@@ -15,6 +15,8 @@ int main() {
     std::cout << tunnit << " " << minuutit << " " << sekunnit << std::endl;
     int kaikki_sekunnit = aikaSekunneiksi(tunnit, minuutit, sekunnit);
     std::cout << kaikki_sekunnit << " sekuntia vuorokauden alusta." << std::endl;
+
+    return 0;
 }
 
 void sekunnitAjaksi(int kaikki_sekunnit, int &tunnit, int &minuutit, int &sekunnit) {

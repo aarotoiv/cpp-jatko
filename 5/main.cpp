@@ -4,7 +4,8 @@
 #include <string>
 #include <sstream>
 
-void pyydaNumerot();
+void pyydaNumerot(int (&pyydetyt)[7]);
+Numerot pyydaArvotutNumerot();
 void arvoNumerot(int *numerot, int& plus);
 void analyysi(int *numerot, int plus, int *arvotut, int aPlus);
 bool onJo(int arvotut[], int numero, int len);
@@ -34,8 +35,13 @@ int main() {
         std::cin.ignore();
         
         if(komento == 1) {
-            pyydaNumerot();  
-
+            int numerot[7] = {0,0,0,0,0,0,0};
+            pyydaNumerot(numerot);  
+            std::cout << "KÄYTTÄJÄN RIVI ON:";
+            for(int i = 0; i<7; i++) {
+                std::cout << " " << numerot[i];
+            }
+            std::cout << "\n\n" << std::endl;
         } else if(komento == 2) {
             
 
@@ -48,34 +54,59 @@ int main() {
     return 0;
 }
 
-void pyydaNumerot() {
+void pyydaNumerot(int (&pyydetyt)[7]) {
     std::cout << "ILMOITA NUMEROT: " << std::endl;
-    int pyydetyt[7] = {0,0,0,0,0,0,0};
-    
-
     int i = 0;
     while(i < 7) {
+        std::fill_n(pyydetyt, 7, 0);
+        bool quit = false;
         i = 0;
         std::string input;
         std::getline(std::cin, input);
         std::stringstream ssin(input);
         while(ssin.good() && i < 7) {
-            ssin >> pyydetyt[i]; 
-            ++i;
+            int temp = 0;
+            ssin >> temp; 
+            if(!onJo(pyydetyt, temp, i+1) && temp > 0 && temp < 41) {
+                pyydetyt[i] = temp;
+                ++i;
+            } else {
+                quit = true;
+                break;
+            }
         }
-        if(i < 7) 
+        if(i < 7 && !quit) 
             std::cout << "ET SYÖTTÄNYT TARPEEKSI NUMEROITA" << std::endl;
+        else if(quit) 
+            std::cout << "Ilmoitit useamman saman numeron, tai numerot eivat ole rajojen sisalla" << std::endl;
     }
-    std::cout << "KÄYTTÄJÄN RIVI ON:";
-    for(int j = 0; j<i; j++) {
-        std::cout << " " << pyydetyt[j];
+}
+Numerot pyydaArvotutNumerot() {
+    int numerot[7] = {0,0,0,0,0,0,0};
+    pyydaNumerot(numerot);  
+    int lisaNumero = 0;
+    std::cout << "Anna arvottu lisänumero: ";
+    while(lisaNumero == 0) {
+        int temp = 0;
+        std::cin >> temp;
+        if(!onJo(numerot, temp, 7) && temp > 0 && temp < 41) 
+            lisaNumero = temp;
+        else 
+            std::cout << "Lisänumero ei sovi." << std::endl;
     }
-    //TODO NEEDS ASK FOR ENTER
-
-    std::cout << "\n\n" << std::endl;
-    
+    int plus = 0; 
+    std::cout << "Anna arvottu plusnumero: ";
+    while(plus == 0) {
+        int temp = 0; 
+        std::cin >> temp;
+        if(!onJo(numerot, temp, 7) && temp > 0 && temp < 31) 
+            plus = temp;
+        else 
+            std::cout << "Plusnumero ei sovi." << std::endl;
+    }
 }
 
+//NEEDS REWRITE
 void analyysi(int *numerot, int plus, int *arvotut, int aPlus) {
     int oikein = 0;
     for(int i = 0; i<7; i++) {

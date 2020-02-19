@@ -7,8 +7,9 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <fstream>
 
-
+//numerot structi
 struct Numerot {
     int numerot[7] = {0,0,0,0,0,0,0};
     int lisaNumero = 0;
@@ -18,6 +19,7 @@ struct Numerot {
 
 void pyydaNumerot(int (&pyydetyt)[7], bool canForceQuit);
 void pyydaMonta(std::vector<std::array<int, 7>> &kaikkiNumerot);
+void lueTiedostosta(std::vector<std::array<int, 7>> &kaikkiNumerot);
 Numerot pyydaArvotutNumerot();
 Numerot arvoNumerot();
 void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot);
@@ -28,48 +30,66 @@ void askForEnter();
 
 
 int main() {
+    //running muuttuja jolloin tietää koska ohjelma lopetetaan.
     bool running = true;
     int komento = 0;
     
+    //seedi randille jota käytetään arvonnoissa
     srand(time(NULL));
+
     std::cout << "Tervetuloa lottopeliin!" << std::endl;
+    //mainloop
     while(running) {
         std::cout << "Ilmoita komento:\n" 
         << "1) Lue ja tulosta lottorivi\n" 
         << "2) Lue käyttäjän ja oikea rivi, tee tulosanalyysi\n" 
         << "3) Lue käyttäjän rivi, arvo oikea rivi, tee tulosanalyysi\n"
         << "4) Lue monta käyttäjän riviä, arvo oikea rivi, tee tuloasanalyysi\n"
-        << "5) Lopeta ohjelman ajo\n"
+        << "5) Lue pelitiedot tiedostosta, tee tuloanalyysi\n"
+        << "6) Lopeta ohjelman ajo\n"
         << std::endl;
 
         std::cin >> komento;
         std::cin.ignore();
         
+        //pyydetään käyttäjän numerot ja tulostetaan ne
         if(komento == 1) {
             int numerot[7] = {0,0,0,0,0,0,0};
+            std::cout << "ILMOITA NUMEROT: ";
             pyydaNumerot(numerot, false);  
             std::cout << "KÄYTTÄJÄN RIVI ON:";
             for(int i = 0; i<7; i++) {
                 std::cout << " " << numerot[i];
             }
             askForEnter();
-        } else if(komento == 2) {
+        } 
+        //pyydetään käyttäjän numerot ja pyydetään arvotut numerot
+        //tehdään analyysi
+        else if(komento == 2) {
             int omatNumerot[7] = {0,0,0,0,0,0,0};
+            std::cout << "ILMOITA KÄYTTÄJÄN NUMEROT: ";
             pyydaNumerot(omatNumerot, false);
             Numerot arvotutNumerot = pyydaArvotutNumerot();
             
             analyysi(omatNumerot, arvotutNumerot);
     
             askForEnter();
-        } else if(komento == 3) {
+        }
+        //pyydetään käyttäjän numerot ja arvotaan numerot
+        //tehdään analyysi 
+        else if(komento == 3) {
             int omatNumerot[7] = {0,0,0,0,0,0,0};
+            std::cout << "ILMOITA KÄYTTÄJÄN NUMEROT: ";
             pyydaNumerot(omatNumerot, false);
             Numerot arvotutNumerot = arvoNumerot();
             
             analyysi(omatNumerot, arvotutNumerot);
 
             askForEnter();
-        } else if(komento == 4) {
+        }
+        //pyydetään numeroita kunnes käyttäjä syöttää tyhjän rivin
+        //tehdään analyysit mikäli käyttäjä syötti vähintään yhden rivin 
+        else if(komento == 4) {
             std::vector<std::array<int, 7>> kaikkiNumerot;
             pyydaMonta(kaikkiNumerot);
             if(kaikkiNumerot.size() > 0) {
@@ -79,7 +99,22 @@ int main() {
                 std::cout << "Et syöttänyt yhtäkään täyttä riviä." << std::endl;
             }
             askForEnter();
-        } else if(komento == 5) {
+        }
+        //luetaan numerot tiedostosta, vain rivit joissa on kaikki 7 numeroa huomioidaan
+        //tehdään analyysit 
+        else if(komento == 5) {
+            std::vector<std::array<int, 7>> kaikkiNumerot;
+            lueTiedostosta(kaikkiNumerot);
+            if(kaikkiNumerot.size() > 0) {
+                Numerot arvotutNumerot = arvoNumerot();
+                analysoiMonta(kaikkiNumerot, arvotutNumerot);
+            } else {
+                std::cout << "Yhtäkään täyttä riviä ei luettu." << std::endl;
+            }
+            askForEnter();
+        }
+        //lopetetaan ohjelma 
+        else if(komento == 6) {
             std::cout << "Ohjelman ajo loppuu." << std::endl;
             running = false;
             break;
@@ -88,8 +123,9 @@ int main() {
     return 0;
 }
 
+//käyttäjältä pyydetään perus 7 numeron rivi.
+//en huomannut tekstiä: "virhekäsittelyä ei tarvitse tehdä syöttötiedoille", joten tästä löytyy varsin tarkat "checkerit"
 void pyydaNumerot(int (&pyydetyt)[7], bool canForceQuit) {
-    std::cout << "ILMOITA NUMEROT: " << std::endl;
     int i = 0;
     while(i < 7) {
         std::fill_n(pyydetyt, 7, 0);
@@ -117,10 +153,14 @@ void pyydaNumerot(int (&pyydetyt)[7], bool canForceQuit) {
             std::cout << "Ilmoitit useamman saman numeron, tai numerot eivat ole rajojen sisalla" << std::endl;
     }
 }
+//käyttäjältä pyydetään rivejä, kunnes vajaavainen rivi palautetaan, jolloin tiedetään että käyttäjä ei tahdo enää syöttää rivejä.
 void pyydaMonta(std::vector<std::array<int, 7>> &kaikkiNumerot) {
     bool asking = true;
+    int i = 0;
     while(asking) {
+        i++;
         int numerot[7] = {0,0,0,0,0,0,0};
+        std::cout << "ILMOITA käyttäjän " << i << " numerot:";
         pyydaNumerot(numerot, true);
         if(numerot[0] == 0 || numerot[1] == 0 || numerot[2] == 0 || numerot[3] == 0 || numerot[4] == 0 || numerot[5] == 0 || numerot[6] == 0) {
             asking = false;
@@ -131,9 +171,46 @@ void pyydaMonta(std::vector<std::array<int, 7>> &kaikkiNumerot) {
             std::copy(std::begin(numerot), std::end(numerot), std::begin(temp));
             kaikkiNumerot.push_back(temp);
         }
+        std::cout << std::endl;
     }
 }
+//luetaan tiedostosta rivit
+//vain rivit joilla on 7 numeroa huomioidaan
+void lueTiedostosta(std::vector<std::array<int, 7>> &kaikkiNumerot) {
+    std::string nimi;
+    std::cout << "Ilmoita tiedoston nimi: " << std::endl;
+    std::cin >> nimi;
+    std::cin.ignore();
+    std::ifstream file(nimi);
+    std::string line;
+    int rivit = 0;
+    if(file.is_open()) {
+        while(getline(file, line)) {std::cout << "ILMOITA NUMEROT: ";
+            std::array<int, 7> rivi;
+
+            std::stringstream ssin(line);
+            int i = 0;
+            while(ssin.good() && i < 7) {
+                int temp = 0;
+                ssin >> rivi[i];
+                ++i;
+            }
+            if(i == 7) {
+                kaikkiNumerot.push_back(rivi);
+                rivit++;
+            }
+            
+        }
+        file.close();
+        std::cout << "Syötit " << rivit << " täyttä riviä.\n" << std::endl;
+    } else 
+        std::cout << "TIEDOSTOA EI VOIDA AVATA\n" << std::endl;
+
+}
+//pyydä arvotut numerot
+//palauttaa structin, koska lisanumero ja plusnumero vaaditaan myös
 Numerot pyydaArvotutNumerot() {
+    std::cout << "ILMOITA ARVOTUT NUMEROT: ";
     int numerot[7] = {0,0,0,0,0,0,0};
     pyydaNumerot(numerot, false);  
     int lisaNumero = 0;
@@ -166,7 +243,7 @@ Numerot pyydaArvotutNumerot() {
     neNumerot.plusNumero = plus;
     return neNumerot;
 }
-
+//analyysi
 void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot) {
     int oikein = 0;
     bool lisaOikein = false;
@@ -191,7 +268,8 @@ void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot) {
     << (plusOikein ? ", plusnumero oikein" : ", plusnumero väärin") 
     << std::endl;    
 }
-
+//analysoi monta riviä
+//analysoidaan niin monta riviä kuin "kaikkinumerot" vectorista löytyy
 void analysoiMonta(std::vector<std::array<int, 7>> &kaikkiNumerot, Numerot arvotutNumerot) {
     std::cout << "TULOS:" << std::endl;
     for(int i = 0; i<kaikkiNumerot.size(); i++) {
@@ -202,6 +280,7 @@ void analysoiMonta(std::vector<std::array<int, 7>> &kaikkiNumerot, Numerot arvot
     }
 }
 
+//arvotaan numerot
 Numerot arvoNumerot() {
     Numerot arvotutNumerot;
     for(int i = 0; i<7; i++) {
@@ -226,6 +305,7 @@ Numerot arvoNumerot() {
     return arvotutNumerot;
 }
 
+//apufunktio jolla voi katsoa, onko arvottu tai syötetty numero jo taulukossa
 bool onJo(int arvotut[], int numero, int len) {
     for(int i = 0; i<len; i++) {
         if(arvotut[i] == numero)
@@ -233,6 +313,7 @@ bool onJo(int arvotut[], int numero, int len) {
     }
     return false;
 }
+//pyydä käyttäjää painamaan enteriä, jotta ohjelma jatkuu
 void askForEnter() {
     std::cout << "\nPAINA ENTER jatkaaksesi ...\n";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');

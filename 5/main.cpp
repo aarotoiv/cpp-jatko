@@ -14,7 +14,7 @@ struct Numerot {
 
 void pyydaNumerot(int (&pyydetyt)[7]);
 Numerot pyydaArvotutNumerot();
-void arvoNumerot(int *numerot, int& plus);
+Numerot arvoNumerot();
 void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot);
 bool onJo(int arvotut[], int numero, int len);
 void askForEnter();
@@ -30,7 +30,8 @@ int main() {
         std::cout << "Ilmoita komento:\n" 
         << "1) Lue ja tulosta lottorivi\n" 
         << "2) Lue käyttäjän ja oikea rivi, tee tulosanalyysi\n" 
-        << "3) Lopeta ohjelman ajo\n"
+        << "3) Lue käyttäjän rivi, arvo oikea rivi, tee tuloanalyysi\n"
+        << "4) Lopeta ohjelman ajo\n"
         << std::endl;
 
         std::cin >> komento;
@@ -53,6 +54,14 @@ int main() {
     
             askForEnter();
         } else if(komento == 3) {
+            int omatNumerot[7] = {0,0,0,0,0,0,0};
+            pyydaNumerot(omatNumerot);
+            Numerot arvotutNumerot = arvoNumerot();
+            
+            analyysi(omatNumerot, arvotutNumerot);
+
+            askForEnter();
+        } else if(komento == 4) {
             std::cout << "Ohjelman ajo loppuu." << std::endl;
             running = false;
             break;
@@ -96,7 +105,7 @@ Numerot pyydaArvotutNumerot() {
     while(lisaNumero == 0) {
         int temp = 0;
         std::cin >> temp;
-        if(!onJo(numerot, temp, 7) && temp > 0 && temp < 41) 
+        if(temp > 0 && temp < 41) 
             lisaNumero = temp;
         else 
             std::cout << "Lisänumero ei sovi." << std::endl;
@@ -106,7 +115,7 @@ Numerot pyydaArvotutNumerot() {
     while(plus == 0) {
         int temp = 0; 
         std::cin >> temp;
-        if(!onJo(numerot, temp, 7) && temp > 0 && temp < 31) 
+        if(temp > 0 && temp < 31) 
             plus = temp;
         else 
             std::cout << "Plusnumero ei sovi." << std::endl;
@@ -147,16 +156,28 @@ void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot) {
     << std::endl;    
 }
 
-void arvoNumerot(int *numerot, int &plus) {
+Numerot arvoNumerot() {
+    Numerot arvotutNumerot;
     for(int i = 0; i<7; i++) {
-        numerot[i] = 0;
-        while(numerot[i] == 0) {
+        arvotutNumerot.numerot[i] = 0;
+        while(arvotutNumerot.numerot[i] == 0) {
             int temp = rand() % 40 + 1;
-            if(temp > 0 && temp < 41 && !onJo(numerot, temp, 7)) 
-                numerot[i] = temp;
+            if(!onJo(arvotutNumerot.numerot, temp, 7)) 
+                arvotutNumerot.numerot[i] = temp;
         }
     }
-    plus = rand() % 30 + 1;
+    while(arvotutNumerot.lisaNumero == 0) {
+        int lisa = rand() % 40 + 1;
+        if(!onJo(arvotutNumerot.numerot, lisa, 7)) 
+            arvotutNumerot.lisaNumero = lisa;
+    }
+    while(arvotutNumerot.plusNumero == 0) {
+        int plus = rand() % 30 + 1;
+        if(!onJo(arvotutNumerot.numerot, plus, 7)) 
+            arvotutNumerot.plusNumero = plus;
+    }
+    std::cout << "Numerot arvottiin" << std::endl;
+    return arvotutNumerot;
 }
 
 bool onJo(int arvotut[], int numero, int len) {

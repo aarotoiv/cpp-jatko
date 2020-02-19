@@ -3,28 +3,30 @@
 #include <time.h> 
 #include <string>
 #include <sstream>
+#include <limits>
+
+struct Numerot {
+    int numerot[7] = {0,0,0,0,0,0,0};
+    int lisaNumero = 0;
+    int plusNumero = 0;
+};
+
 
 void pyydaNumerot(int (&pyydetyt)[7]);
 Numerot pyydaArvotutNumerot();
 void arvoNumerot(int *numerot, int& plus);
-void analyysi(int *numerot, int plus, int *arvotut, int aPlus);
+void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot);
 bool onJo(int arvotut[], int numero, int len);
+void askForEnter();
 
-struct Numerot {
-    int numerot[7];
-    int lisaNumero;
-    int plusNumero;
-};
 
 int main() {
     bool running = true;
     int komento = 0;
     
     srand(time(NULL));
-
     std::cout << "Tervetuloa lottopeliin!" << std::endl;
     while(running) {
-        
         std::cout << "Ilmoita komento:\n" 
         << "1) Lue ja tulosta lottorivi\n" 
         << "2) Lue käyttäjän ja oikea rivi, tee tulosanalyysi\n" 
@@ -41,10 +43,15 @@ int main() {
             for(int i = 0; i<7; i++) {
                 std::cout << " " << numerot[i];
             }
-            std::cout << "\n\n" << std::endl;
+            askForEnter();
         } else if(komento == 2) {
+            int omatNumerot[7] = {0,0,0,0,0,0,0};
+            pyydaNumerot(omatNumerot);
+            Numerot arvotutNumerot = pyydaArvotutNumerot();
             
-
+            analyysi(omatNumerot, arvotutNumerot);
+    
+            askForEnter();
         } else if(komento == 3) {
             std::cout << "Ohjelman ajo loppuu." << std::endl;
             running = false;
@@ -104,23 +111,39 @@ Numerot pyydaArvotutNumerot() {
         else 
             std::cout << "Plusnumero ei sovi." << std::endl;
     }
+    
+    Numerot neNumerot;
+
+    for(int i = 0; i<7; i++) {
+        neNumerot.numerot[i] = numerot[i];
+    }
+    neNumerot.lisaNumero = lisaNumero;
+    neNumerot.plusNumero = plus;
+    return neNumerot;
 }
 
-//NEEDS REWRITE
-void analyysi(int *numerot, int plus, int *arvotut, int aPlus) {
+void analyysi(int (&omatNumerot)[7], Numerot arvotutNumerot) {
     int oikein = 0;
+    bool lisaOikein = false;
+    bool plusOikein = false;
+
     for(int i = 0; i<7; i++) {
         for(int j = 0; j<7; j++) {
-            if(numerot[i] == arvotut[j]) 
+            if(omatNumerot[i] == arvotutNumerot.numerot[j]) 
                 oikein++;
         }
+        if(omatNumerot[i] == arvotutNumerot.lisaNumero) 
+            lisaOikein = true;
+
+        if(omatNumerot[i] == arvotutNumerot.plusNumero)
+            plusOikein = true;
     }
 
     std::cout << "Tulos: " 
     << oikein 
-    << (plus == aPlus ? "+1" : "") 
+    << (lisaOikein ? "+1" : "") 
     << " oikein"
-    << (plus == aPlus ? ", plusnumero oikein" : ", plusnumero väärin") 
+    << (plusOikein ? ", plusnumero oikein" : ", plusnumero väärin") 
     << std::endl;    
 }
 
@@ -142,4 +165,9 @@ bool onJo(int arvotut[], int numero, int len) {
             return true;
     }
     return false;
+}
+void askForEnter() {
+    std::cout << "\nPAINA ENTER jatkaaksesi ...\n";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    std::cout << "\n\n" << std::endl;
 }
